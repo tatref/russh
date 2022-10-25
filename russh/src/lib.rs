@@ -162,6 +162,9 @@ mod pty;
 pub use pty::Pty;
 pub use sshbuffer::SshId;
 
+#[cfg(feature = "serde")]
+use serde::Serialize;
+
 macro_rules! push_packet {
     ( $buffer:expr, $x:expr ) => {{
         use byteorder::{BigEndian, ByteOrder};
@@ -472,8 +475,15 @@ impl ChannelOpenFailure {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize))]
 /// The identifier of a channel.
 pub struct ChannelId(u32);
+
+impl ChannelId {
+    pub fn id(&self) -> u32 {
+        self.0
+    }
+}
 
 impl Display for ChannelId {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
